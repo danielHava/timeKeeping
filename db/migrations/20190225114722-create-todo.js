@@ -2,19 +2,17 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Todos', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.INTEGER,
         primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      id: {
-        type: Sequelize.INTEGER
+        autoIncrement: true
       },
       content: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
+        allowNull: false
       },
       createdBy: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        
       },
       createdAt: {
         allowNull: false,

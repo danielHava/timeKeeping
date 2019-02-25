@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
+      unique: true
     },
     content: {
       type: DataTypes.TEXT,
@@ -11,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     createdBy:  {
       type: DataTypes.INTEGER,
-      references: {
-        model: 'user',
-        key: 'id',
-        as: 'createdBy',
-      }
+      // references: {
+      //   model: 'user',
+      //   key: 'id',
+      //   as: 'createdBy',
+      // }
     }
   }, {});
   Todo.associate = (models) => {

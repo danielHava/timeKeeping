@@ -2,8 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
 
-const apiTodoController = require('./routes/api/todoController');
-const apiUserController = require('./routes/api/userController');
+const apiTodoController = require('./controllers/todos');
+const apiUserController = require('./controllers/users');
 
 const app = express();
 
