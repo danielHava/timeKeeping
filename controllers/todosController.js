@@ -3,7 +3,7 @@ const Todos = require('../db/models').Todo;
 const TodoController = {
   list(req, res){
     Todos
-      .findAll()
+      .findAll({})
       .then(result => res.status(200).json(result))
       .catch(error => res.status(400).json(error));
   },
