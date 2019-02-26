@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     role: {
       type: DataTypes.ENUM,
-      values: ['user', 'manager', 'admin']
+      values: ['user', 'manager', 'admin'],
+      allowNull: false
     },
     preferredHours: {
       type: DataTypes.STRING,

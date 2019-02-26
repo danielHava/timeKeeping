@@ -14,7 +14,7 @@ const UserController = {
         lastName: req.body.lastName,
         email: req.body.email
       })
-      .then(result => res.status(201).json(result) )
+      .then(result => res.status(201).json(result))
       .catch(error => res.status(406).json(error));
   },
   update(req, res){
