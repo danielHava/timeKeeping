@@ -2,8 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
 
-const apiTodoController = require('./controllers/todos');
-const apiUserController = require('./controllers/users');
+const todosRoute = require('./routes').todosRoute;
+const usersRoute = require('./routes').usersRoute;
 
 const app = express();
 
@@ -11,7 +11,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/api/todo/', apiTodoController);
-app.use('/api/user/', apiUserController);
+app.use('/api/todos/', todosRoute);
+app.use('/api/users/', usersRoute);
 
 module.exports = app;

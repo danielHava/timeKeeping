@@ -12,15 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     createdBy:  {
       type: DataTypes.INTEGER,
-      // references: {
-      //   model: 'user',
-      //   key: 'id',
-      //   as: 'createdBy',
-      // }
     }
   }, {});
-  Todo.associate = (models) => {
-    Todo.belongsTo(models.User);
-  };
   return Todo;
 };

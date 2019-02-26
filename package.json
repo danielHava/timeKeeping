@@ -3,8 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "sequelize-skeleton": "npx sequelize init:models; npx sequelize init:config"
+    "start": "nodemon server.js",
+    "sequelize-skeleton": "npx sequelize init:models; npx sequelize init:config",
+    "run-migrations": "npx sequelize db:migrate",
+    "undo-migrations": "npx sequelize db:migrate:undo:all",
+    "run-seeders": "npx sequelize db:seed:all",
+    "undo-seeders": "npx sequelize db:seed:undo:all"
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",

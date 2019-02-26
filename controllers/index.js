@@ -1,7 +1,7 @@
-const todos = require('./todos');
-const users = require('./users');
+const todosController = require('./todosController');
+const usersController = require('./usersController');
 
 module.exports = {
-  todos,
-  users
+  todosController,
+  usersController
 };

@@ -16,8 +16,5 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     }
   }, {});
-  User.associate = (models) => {
-    User.hasMany(models.Todo);
-  };
   return User;
 };
