@@ -11,11 +11,23 @@ module.exports = {
         allowNull: false
       },
       lastName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       email: {
         type: Sequelize.STRING,
         allowNull: false
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      role: {
+        type:   Sequelize.ENUM,
+        values: ['user', 'manager', 'admin']
+      },
+      preferredHours: {
+        type:   Sequelize.STRING,
       },
       createdAt: {
         type: Sequelize.DATE,

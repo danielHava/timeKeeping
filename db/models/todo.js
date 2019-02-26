@@ -6,12 +6,26 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       unique: true
     },
+    title: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
     content: {
       type: DataTypes.TEXT,
       allowNull: false
     },
-    createdBy:  {
+    createdBy: {
       type: DataTypes.INTEGER,
+    },
+    onGoing: {
+      type: DataTypes.BOOLEAN
+    },
+    duration: {
+      type: DataTypes.STRING
+    },
+    status: {
+      type: DataTypes.ENUM,
+      values: ['new', 'doing', 'done']
     }
   }, {});
   return Todo;

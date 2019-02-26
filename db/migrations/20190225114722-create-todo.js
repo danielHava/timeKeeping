@@ -6,21 +6,34 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true
       },
+      title: {
+        type: Sequelize.TEXT,
+        allowNull: false
+      },
       content: {
         type: Sequelize.TEXT,
         allowNull: false
       },
       createdBy: {
-        type: Sequelize.INTEGER,
-        
+        type: Sequelize.INTEGER
+      },
+      onGoing: {
+        type: Sequelize.BOOLEAN
+      },
+      duration: {
+        type: Sequelize.STRING
+      },
+      status: {
+        type: Sequelize.ENUM,
+        values: ['new', 'doing', 'done']
       },
       createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        allowNull: false
       },
       updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        allowNull: false
       }
     });
   },
