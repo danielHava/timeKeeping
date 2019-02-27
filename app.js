@@ -9,10 +9,9 @@ const authRoute = require('./routes').authRoute;
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const options = {
-    // explorer : false,
-    // customCss: '.swagger-ui .topbar { display: none }',
-    title: "da"
-  };
+  customCss: '.swagger-ui .topbar { display: none }',
+  customJs: './customize_swagger.js'
+};
  
 const app = express();
 
@@ -21,7 +20,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
-
 app.use('/api/v1/todos/', todosRoute);
 app.use('/api/v1/users/', usersRoute);
 app.use('/api/v1/auth', authRoute);

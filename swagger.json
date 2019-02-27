@@ -7,6 +7,105 @@
   },
   "schemes" : [ "https", "http" ],
   "paths" : {
+    "/api/v1/auth/register" : {
+      "post" : {
+        "tags" : [ "Auth" ],
+        "summary" : "Registers a new User and returns a token.",
+        "description" : "",
+        "operationId" : "authController.register",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "User object that needs to be added",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/User"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "User has been created."
+          },
+          "403" : {
+            "description" : "Failed to register User."
+          }
+        },
+        "security" : [ {
+          "todostore_auth" : [ "write:Users" ]
+        } ]
+      }
+    },
+    "/api/v1/auth/login" : {
+      "post" : {
+        "tags" : [ "Auth" ],
+        "summary" : "Returns a token for an existing User.",
+        "description" : "",
+        "operationId" : "authController.login",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "email",
+          "in" : "body",
+          "type": "string",
+          "example": "marcel.popescu@gmail.com",
+          "description" : "Email of the User logging in.",
+          "required" : true }, {
+          "name" : "password",
+          "in" : "body",
+          "type": "string",
+          "example": "parolamarcel",
+          "description" : "Password of the User logging in.",
+          "required" : true
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "User authenticated."
+          },
+          "401" : {
+            "description" : "Invalid password."
+          },
+          "500" : {
+            "description" : "Error on server."
+          }
+        },
+        "security" : [ {
+          "todostore_auth" : [ "write:Users" ]
+        } ]
+      }
+    },
+    "/api/v1/auth/me" : {
+      "get" : {
+        "tags" : [ "Auth" ],
+        "summary" : "Returns the User who is the supplied token bearer.",
+        "description" : "",
+        "operationId" : "authController.details",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "head",
+          "name" : "x-access-token",
+          "example": "eyJhbGciOiJIUzn1uiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAsImlhdCI6MTU1MTE5NDM3MywiZXhwIjoxNTUxMjgwNzczfQ.qP_drsMHA9vqxC8gfLmXJRWH1jjYpYWHDUkJ-hJiwTA",
+          "description" : "Supply a valid token.",
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "User found"
+          },
+          "404" : {
+            "description" : "User not found"
+          },
+          "500" : {
+            "description" : "Error on server"
+          }
+        },
+        "security" : [ {
+          "todostore_auth" : [ "read:Users" ]
+        } ]
+      }
+    },
     "/api/v1/todos" : {
       "post" : {
         "tags" : [ "ToDo" ],
@@ -328,11 +427,15 @@
   "definitions" : {
     "Todo" : {
       "type" : "object",
-      "required" : [ "content", "createdBy" ],
+      "required" : [ "content", "title" ],
       "properties" : {
         "id" : {
           "type" : "integer",
           "format" : "int64"
+        },
+        "title" : {
+          "type" : "string",
+          "example" : "what to do"
         },
         "content" : {
           "type" : "string",
@@ -341,6 +444,14 @@
         "createdBy" : {
           "type" : "integer",
           "format" : "int64"
+        },
+        "onGoing" : {
+          "type" : "boolean",
+          "example" : "true"
+        },
+        "duration" : {
+          "type" : "string",
+          "example" : "2 hours"
         },
         "status" : {
           "type" : "string",
@@ -353,7 +464,7 @@
     },
     "User" : {
       "type" : "object",
-      "required" : [ "email", "firstName" ],
+      "required" : [ "email", "firstName", "lastName", "password", "role" ],
       "properties" : {
         "id" : {
           "type" : "integer",
@@ -370,6 +481,18 @@
         "email" : {
           "type" : "string",
           "example" : "marcel.popescu@gmail.com"
+        },
+        "password" : {
+          "type" : "string",
+          "example" : "parolamarcel"
+        },
+        "role" : {
+          "type" : "string",
+          "enum" : [ "user", "manager", "admin" ]
+        },
+        "preferredHours" : {
+          "type" : "string",
+          "example" : "9-5"
         }
       },
       "xml" : {
