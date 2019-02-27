@@ -1,18 +1,21 @@
-const todoController = require('../controllers').todosController;
+const TodosController = require('../controllers').TodosController;
+const verifyToken = require('../middleware/verifyToken');
 const express = require('express');
 const router = express.Router();
+
+router.use(verifyToken);
 
 router.get('/', (req, res) => res.status(200).send({
     message: 'Welcome to the Todo end-point!',
 }));
-router.get('/all', todoController.list);
+router.get('/all', TodosController.list);
 
-router.get('/:id', todoController.find);
+router.get('/:id', TodosController.find);
 
-router.post('/', todoController.create);
+router.post('/', TodosController.create);
 
-router.put('/:id', todoController.update);
+router.put('/:id', TodosController.update);
 
-router.delete('/:id', todoController.delete);
+router.delete('/:id', TodosController.delete);
 
 module.exports = router;

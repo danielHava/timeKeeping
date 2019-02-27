@@ -1,9 +1,9 @@
-const todosController = require('./todosController');
-const usersController = require('./usersController');
-const authController = require('./authController');
+const TodosController = require('./TodosController');
+const UsersController = require('./UsersController');
+const AuthController = require('./AuthController');
 
 module.exports = {
-  authController,
-  todosController,
-  usersController
+  AuthController,
+  TodosController,
+  UsersController
 };
