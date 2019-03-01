@@ -6,6 +6,8 @@ const router = express.Router();
 router.use(verifyToken);
 
 router.get('/', (req, res) => res.status(200).send({
+    id: req.userId,
+    role: req.userRole,
     message: 'Welcome to the Todo end-point!',
 }));
 router.get('/all', TodosController.list);

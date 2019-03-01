@@ -22,7 +22,7 @@ const AuthController = {
   },
   details(req, res){
     Users
-      .findById(req.userId)
+      .findOne({where: { id: req.userId }})
       .then(result => {
         if(!result){
           res.status(404).json({ message: 'No user found.' });
@@ -43,12 +43,11 @@ const AuthController = {
         if (!passwordIsValid){
           res.status(401).send({ auth: false, token: null, message: 'Invalid password.' });
         }
-        const token = jwt.sign({ id: user.id, role: createdUser.role }, process.env.SERVER_SECRET, { expiresIn: 86400 });
+        const token = jwt.sign({ id: user.id, role: user.role }, process.env.SERVER_SECRET, { expiresIn: 86400 });
         res.status(200).json({ auth: true, token: token });
       })
-      .catch(error => res.status(500).json({ message: 'Error on server.', err: error }))
+      .catch(error => res.status(500).json({ message: 'Error on server.', err: error }));
   }
-
 };
 
 module.exports = AuthController;
