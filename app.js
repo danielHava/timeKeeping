@@ -10,7 +10,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const options = {
   customCss: '.swagger-ui .topbar { display: none }',
-  customJs: './customize_swagger.js'
+  // customJs: './customize_swagger.js'
 };
  
 const app = express();

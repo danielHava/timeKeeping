@@ -2,7 +2,7 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "keep track of your time",
-    "version" : "0.0.1",
+    "version" : "1.0.0",
     "title" : "Time Keeping"
   },
   "schemes" : [ "https", "http" ],

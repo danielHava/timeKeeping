@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', (req, res) => res.status(200).send({
-    message: 'Welcome to the Auth end-point!',
+  message: 'Welcome to the Auth end-point!',
 }));
 router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
