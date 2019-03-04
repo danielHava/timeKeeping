@@ -1,4 +1,4 @@
-const Users = require("../db/models").User;
+const Users = require("../db/models").Users;
 
 const UserController = {
   find(req, res){

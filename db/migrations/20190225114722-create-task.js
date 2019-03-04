@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Todos', {
+    return queryInterface.createTable('Tasks', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -27,6 +27,10 @@ module.exports = {
         type: Sequelize.ENUM,
         values: ['new', 'doing', 'done']
       },
+      lastModifiedBy: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false
@@ -38,6 +42,6 @@ module.exports = {
     });
   },
   down: queryInterface => {
-    return queryInterface.dropTable('Todos');
+    return queryInterface.dropTable('Tasks');
   }
 };

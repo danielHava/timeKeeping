@@ -25,7 +25,7 @@ timeKeeping/
   controllers/
     index.js
     AuthController.js
-    TodosController.js
+    TasksController.js
     UsersController.js
   db/
     migrations/
@@ -33,8 +33,8 @@ timeKeeping/
       20190225114722-create-todo.js
     models/
       index.js
-      todo.js
-      user.js
+      Tasks.js
+      Users.js
     seeders/
       xxxxxxxxxxxxxx-demo-user.js
       xxxxxxxxxxxxxx-demo-todo.js
@@ -43,7 +43,7 @@ timeKeeping/
   routes/
     index.js
     authRoute.js
-    todosRoute.js
+    tasksRoute.js
     usersRoute.js
   package.json
   package-lock.json

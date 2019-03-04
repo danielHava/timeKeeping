@@ -1,16 +1,16 @@
-const Todos = require('../db/models').Todo;
+const Tasks = require('../db/models').Tasks;
 
-const TodoController = {
+const TaskController = {
   list(req, res){
     let queryParams = {};
     if(req.userRole === 'user'){
       queryParams.where = { createdBy: Number(req.userId) }
     }
-    Todos
+    Tasks
       .findAll(queryParams)
       .then(result => {
         if(!result){
-          res.status(200).json({ message: "You don't have any Todos." });
+          res.status(200).json({ message: "You don't have any Tasks." });
         }else{
           res.status(200).json(result);
         }
@@ -22,11 +22,11 @@ const TodoController = {
     if(req.userRole === 'user'){
       queryParams.where.createdBy =  Number(req.userId);
     }
-    Todos
+    Tasks
       .findOne(queryParams)
       .then(result => {
         if(!result){
-          res.status(200).json({ message: "You don't have any Todos." });
+          res.status(200).json({ message: "You don't have any Tasks." });
         }else{
           res.status(200).json(result);
         }
@@ -38,7 +38,7 @@ const TodoController = {
     if(req.userRole === 'user'){
       queryParams.where = { createdBy: Number(req.userId) }
     }
-    Todos
+    Tasks
       .create({
         content: req.body.content,
         ...queryParams
@@ -51,7 +51,7 @@ const TodoController = {
     if(req.userRole === 'user'){
       queryParams.where.createdBy =  Number(req.userId);
     }
-    Todos
+    Tasks
       .update({
         content: req.body.content
       },
@@ -64,10 +64,11 @@ const TodoController = {
     if(req.userRole === 'user'){
       queryParams.where.createdBy =  Number(req.userId);
     }
-    Todos
+    Tasks
       .destroy(queryParams)
-      .then(() => res.status(204).json({ message: "You deleted a Todo." }))
+      .then(() => res.status(204).json({ message: "You deleted a Task." }))
       .catch(error => res.status(404).json(error));
   },
 }
-module.exports = TodoController;
+
+module.exports = TaskController;

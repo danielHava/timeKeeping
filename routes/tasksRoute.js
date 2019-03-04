@@ -1,4 +1,4 @@
-const TodosController = require('../controllers').TodosController;
+const TasksController = require('../controllers').TasksController;
 const verifyToken = require('../middleware/verifyToken');
 const express = require('express');
 const router = express.Router();
@@ -10,14 +10,14 @@ router.get('/', (req, res) => res.status(200).send({
     role: req.userRole,
     message: 'Welcome to the Todo end-point!',
 }));
-router.get('/all', TodosController.list);
+router.get('/all', TasksController.list);
 
-router.get('/:id', TodosController.find);
+router.get('/:id', TasksController.find);
 
-router.post('/', TodosController.create);
+router.post('/', TasksController.create);
 
-router.put('/:id', TodosController.update);
+router.put('/:id', TasksController.update);
 
-router.delete('/:id', TodosController.delete);
+router.delete('/:id', TasksController.delete);
 
 module.exports = router;

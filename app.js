@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
 
-const todosRoute = require('./routes').todosRoute;
+const tasksRoute = require('./routes').tasksRoute;
 const usersRoute = require('./routes').usersRoute;
 const authRoute = require('./routes').authRoute;
 
@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
-app.use('/api/v1/todos/', todosRoute);
+app.use('/api/v1/tasks/', tasksRoute);
 app.use('/api/v1/users/', usersRoute);
 app.use('/api/v1/auth', authRoute);
 

@@ -1,5 +1,5 @@
-module.exports = (sequelize, DataTypes) => {
-  const Todo = sequelize.define('Todo', {
+const Tasks = (sequelize, DataTypes) => {
+  const Task = sequelize.define('Task', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -26,7 +26,13 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       type: DataTypes.ENUM,
       values: ['new', 'doing', 'done']
+    },
+    lastModifiedBy: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {});
-  return Todo;
+  return Task;
 };
+
+module.exports = Tasks;
