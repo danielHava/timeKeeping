@@ -1,4 +1,4 @@
-const Tasks = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
   const Task = sequelize.define('Task', {
     id: {
       type: DataTypes.INTEGER,
@@ -34,5 +34,3 @@ const Tasks = (sequelize, DataTypes) => {
   }, {});
   return Task;
 };
-
-module.exports = Tasks;

@@ -4,7 +4,7 @@ function verifyToken(req, res, next) {
   if(req.baseUrl === '/api/v1/auth' && (req.path === '/register' || req.path === '/login')){
     next();
   }else{
-    const token = req.headers['x-access-token'];  
+    const token = req.headers['x-access-token'];    
     if (!token){
       res.status(403).json({ auth: false, message: 'No token provided.' });
     }

@@ -7,7 +7,7 @@ const usersRoute = require('./routes').usersRoute;
 const authRoute = require('./routes').authRoute;
 
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
+const swaggerDocument = require('./docs/swagger.json');
 const options = {
   customCss: '.swagger-ui .topbar { display: none }',
   // customJs: './customize_swagger.js'
