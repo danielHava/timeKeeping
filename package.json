@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "start": "nodemon server.js",
+    "test-init": "npx jasmine init",
+    "test": "npx jasmine",
     "sequelize-skeleton": "npx sequelize init:models; npx sequelize init:config",
     "run-migrations": "npx sequelize db:migrate",
     "undo-migrations": "npx sequelize db:migrate:undo:all",
@@ -21,12 +23,14 @@
     "morgan": "~1.9.0",
     "pg": "^7.8.1",
     "pg-hstore": "^2.3.2",
+    "request": "^2.88.0",
     "sequelize": "^4.42.0",
     "sequelize-cli": "^5.4.0",
     "swagger-ui-express": "^4.0.2"
   },
   "devDependencies": {
     "faker": "^4.1.0",
+    "jasmine": "^3.3.1",
     "lodash": "^4.17.11",
     "nodemon": "^1.18.10"
   }
