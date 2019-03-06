@@ -3,6 +3,8 @@ const verifyToken = require('../middleware/verifyToken');
 const express = require('express');
 const router = express.Router();
 
+const TaskController = new TasksController();
+
 router.use(verifyToken);
 
 router.get('/', (req, res) => res.status(200).send({
@@ -10,14 +12,15 @@ router.get('/', (req, res) => res.status(200).send({
     role: req.userRole,
     message: 'Welcome to the Todo end-point!',
 }));
-router.get('/all', TasksController.list);
 
-router.get('/:id', TasksController.find);
+router.get('/all', TaskController.list);
 
-router.post('/', TasksController.create);
+router.get('/:id', TaskController.find);
 
-router.put('/:id', TasksController.update);
+router.post('/', TaskController.create);
 
-router.delete('/:id', TasksController.delete);
+router.put('/:id', TaskController.update);
+
+router.delete('/:id', TaskController.delete);
 
 module.exports = router;
