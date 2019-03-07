@@ -15,10 +15,16 @@ const AuthController = {
       })
       .then(result => {
         const createdUser = result.dataValues;
-        const token = jwt.sign({ id: createdUser.id, role: createdUser.role }, process.env.SERVER_SECRET, { expiresIn: 86400 });
+        const token = jwt.sign(
+          { id: createdUser.id, role: createdUser.role },
+          process.env.JWT_SECRET,
+          { expiresIn: process.env.JWT_EXPIRATION }
+        );
         res.status(201).json({ auth: true, token: token })
       })
-      .catch(error => res.status(403).json({ auth: false, message: 'Failed to authenticate token.', error: error }));
+      .catch(error => {
+        res.status(403).json({ auth: false, message: 'Failed to authenticate token.', error: error })
+      });
   },
   details(req, res){
     Users
@@ -26,8 +32,9 @@ const AuthController = {
       .then(result => {
         if(!result){
           res.status(404).json({ message: 'No user found.' });
+        }else{
+          res.status(200).json({ message: `User ${result.firstName} ${result.lastName}:${result.role} found.` });
         }
-        res.status(200).json({ message: `User ${result.firstName} ${result.lastName}:${result.role} found.` });
       })
       .catch(error => res.status(500).json({ message: 'Error on server.', err: error }));
   },
@@ -43,7 +50,10 @@ const AuthController = {
         if (!passwordIsValid){
           res.status(401).send({ auth: false, token: null, message: 'Invalid password.' });
         }
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.SERVER_SECRET, { expiresIn: 86400 });
+        const token = jwt.sign(
+          { id: user.id, role: user.role }, 
+          process.env.JWT_SECRET, 
+          { expiresIn: process.env.JWT_EXPIRATION });
         res.status(200).json({ auth: true, token: token });
       })
       .catch(error => res.status(500).json({ message: 'Error on server.', err: error }));
