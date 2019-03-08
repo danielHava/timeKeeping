@@ -7,7 +7,11 @@ function verifyToken(req, res, next){
   }else{
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if(err){
-        res.status(500).json({ auth: false, message: 'Failed to authenticate token.', error: err });
+        res.status(500).json({ 
+          auth: false, 
+          message: 'Failed to authenticate token.', 
+          error: err 
+        });
       }else{
         req.userId = (decoded.id) ? decoded.id : 'undefined id';
         req.userRole = (decoded.role) ? decoded.role : 'undefined role';
