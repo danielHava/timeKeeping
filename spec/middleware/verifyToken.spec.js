@@ -1,5 +1,4 @@
 const verifyToken = require('../../middleware/verifyToken');
-// const jwt = require('jsonwebtoken');
 
 describe('verifyToken middleware', () => {
 
@@ -21,7 +20,6 @@ describe('verifyToken middleware', () => {
   describe('validates token', () => {
 
     it('should fail if no token', () => {
-      console.log('1');
   
       verifyToken(req, res, next);
   
@@ -36,7 +34,6 @@ describe('verifyToken middleware', () => {
     });
   
     it('should fail because token is invalid', () => {
-      console.log('2');
       req.headers = {'x-access-token': 'whatever'};
   
       spyOn(jwt, 'verify').and.callFake((...args) => {
@@ -57,7 +54,6 @@ describe('verifyToken middleware', () => {
     });
   
     it('should pass because token is valid', () => {
-      console.log('3');
       req.headers = {'x-access-token': 'whatever'};
   
       spyOn(jwt, 'verify').and.callFake((...args) => {
@@ -78,7 +74,6 @@ describe('verifyToken middleware', () => {
   describe('unpacks token data', () => {
 
     it('should find userId', () => {
-      console.log('4');
       req.headers = {'x-access-token': 'whatever'};
 
       const uId = jasmine.any(Number);
@@ -100,7 +95,6 @@ describe('verifyToken middleware', () => {
     });
 
     it('should find userRole', () => {
-      console.log('5');
       req.headers = {'x-access-token': 'whatever'};
 
       const uRole = jasmine.any(String);
@@ -121,7 +115,6 @@ describe('verifyToken middleware', () => {
     });
 
     it('should find both userId and userRole', () => {
-      console.log('6');
       req.headers = {'x-access-token': 'whatever'};
 
       const uId = jasmine.any(String);
