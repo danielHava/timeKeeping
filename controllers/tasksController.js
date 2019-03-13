@@ -1,52 +1,80 @@
 const Tasks = require('../db/models').Task;
-const ResponseFactory = require('../utils/ApiResponse');
 
-class TaskController{
-  constructor(){
-    this.factory = new ResponseFactory();
-    this.list = this.list.bind(this);
-    this.find = this.find.bind(this);
-    this.create = this.create.bind(this);
-    this.update = this.update.bind(this);
-    this.delete = this.delete.bind(this);
+const addBody = (req) => ({...req.body });
+const setStatusNew = () => ({ status: 'new' });
+const addTaskId = (req) => ({ where: { id: req.params.id } });
+const setCreatedBy = (req) => {
+  if(req.userRole === 'user'){
+    return { where: { createdBy: Number(req.userId) } };
   }
-  list(req, res) {
-    let queryParams = {};
-    if(req.userRole === 'user'){
-      queryParams.where = { createdBy: Number(req.userId) }
-    }
-    this.factory.getApiResponse(Tasks.findAll(queryParams), 'list', req, res);
+  return {};
+};
+
+function createResult(req, response, status = 200) {
+  req.result = {
+    response,
+    status 
   }
-  find(req, res) {
-    let queryParams = { where: { id: req.params.id } };
-    if(req.userRole === 'user'){
-      queryParams.where.createdBy =  Number(req.userId);
+}
+
+function createParams(req, callbacks) {
+  return callbacks.reduce((qParams, callback) => ({
+    ...qParams,
+    ...callback(req)
+  }), {});
+}
+
+const TaskController = {
+  list: async (req, res, next) => {
+    try {
+      const query = createParams(req, [setCreatedBy]);
+      
+      const items = await Tasks.findAll(query);
+      createResult(req, items, 201);
+      next();
+    } catch(e) {
+      next(e);
     }
-    this.factory.getApiResponse(Tasks.findOne(queryParams), 'find', req, res);
-  }
-  create(req, res) {
-    let queryParams = {};
-    if(req.userRole === 'manager' && req.body.createdBy){
-      queryParams.createdBy = Number(req.body.createdBy);
-    }else{
-      queryParams.createdBy = Number(req.userId);
+  },
+  find: async (req, res, next) => {
+    try {
+      const query = createParams(req, [setCreatedBy, addTaskId]);
+      const items = await Tasks.findOne(query);
+      createResult(req, items, 201);
+      next();
+    } catch(e) {
+      next(e);
     }
-    const newEntry = {...req.body, ...queryParams, status: 'new'};
-    this.factory.getApiResponse(Tasks.create(newEntry), 'create', req, res);
-  }
-  update(req, res) {
-    let queryParams = { where: { id: req.params.id } };
-    if(req.userRole === 'user'){
-      queryParams.where.createdBy =  Number(req.userId);
+  },
+  create: async (req, res, next) => {
+    try {
+      const query = createParams(req, [setCreatedBy, addBody, setStatusNew]);
+      const items = await Tasks.create(query);
+      createResult(req, items, 201);
+      next();
+    } catch(e) {
+      next(e);
     }
-    this.factory.getApiResponse(Tasks.update({...req.body}, queryParams), 'update', req, res);
-  }
-  delete(req, res) {
-    let queryParams = { where: { id: req.params.id } };
-    if(req.userRole === 'user'){
-      queryParams.where.createdBy =  Number(req.userId);
+  },
+  update: async (req, res, next) => {
+    try {
+      const query = createParams(req, [setCreatedBy, addTaskId, addBody]);
+      const items = await Tasks.update(query);
+      createResult(req, items, 201);
+      next();
+    } catch(e) {
+      next(e);
     }
-    this.factory.getApiResponse(Tasks.destroy(queryParams), 'delete', req, res);
+  },
+  delete: async (req, res, next) => {
+    try {
+      const query = createParams(req, [addTaskId]);
+      const items = await Tasks.destroy(query);
+      createResult(req, items, 201);
+      next();
+    } catch(e) {
+      next(e);
+    }
   }
 }
 

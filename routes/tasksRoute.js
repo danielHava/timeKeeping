@@ -1,23 +1,16 @@
-const TasksController = require('../controllers').TasksController;
+const TaskController = require('../controllers').TasksController;
+const apiResponse = require('../utils/ApiResponse');
 const express = require('express');
 const router = express.Router();
 
-const TaskController = new TasksController();
+router.get('/all', TaskController.list, apiResponse);
 
-// router.get('/', (req, res) => res.status(200).send({
-//     id: req.userId,
-//     role: req.userRole,
-//     message: 'Welcome to the Todo end-point!',
-// }));
+router.get('/:id', TaskController.find, apiResponse);
 
-router.get('/all', TaskController.list);
+router.post('/', TaskController.create, apiResponse);
 
-router.get('/:id', TaskController.find);
+router.put('/:id', TaskController.update, apiResponse);
 
-router.post('/', TaskController.create);
-
-router.put('/:id', TaskController.update);
-
-router.delete('/:id', TaskController.delete);
+router.delete('/:id', TaskController.delete, apiResponse );
 
 module.exports = router;
