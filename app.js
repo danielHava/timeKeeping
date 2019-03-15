@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 // middleware
 const logger = require('morgan');
-const passport = require('passport');
+const authUsing = require('./utils/authentication').authUsing;
+const authInit = require('./utils/authentication').authInit;
 const genericErrorHandler = require('./middleware/errorHandler').genericErrorHandler;
 // routes
 const tasksRoute = require('./routes').tasksRoute;
@@ -19,16 +20,17 @@ const options = {
 require('./auth/auth');
 
 const app = express();
+
 // middleware
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(passport.initialize());
+app.use(authInit());
 
 // routes
 app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
-app.use('/api/v1/tasks', passport.authenticate('jwt', { session : false }), tasksRoute);
-app.use('/api/v1/users', passport.authenticate('jwt', { session : false }), usersRoute);
+app.use('/api/v1/tasks', authUsing('jwt'), tasksRoute);
+app.use('/api/v1/users', authUsing('jwt'), usersRoute);
 app.use('/api/v1/auth', authRoute);
 
 app.use(genericErrorHandler);
