@@ -1,47 +1,53 @@
 const Users = require("../db/models").Users;
+const getParamsFromReq = require('../utils/helpers').getParamsFromReq;
+const storeQueryResults = require('../utils/helpers').storeQueryResults;
+const bcrypt = require('bcryptjs');
+
+const setWhereId = (req) => ({ where: { id: req.params.id } });
+const setFromRequestBody = (req) => ({...req.body });
+const setHashedPass = (req) => ({ password: bcrypt.hashSync(req.body.password, 8) });
 
 const UserController = {
-  find(req, res){
-    Users
-      .findById(req.params.id)
-      .then(result => res.status(200).json(result))
-      .catch(error => res.status(404).json(error));
+  find: async (req, res, next) => {
+    try {
+      const query = getParamsFromReq(req, [setWhereId]);
+      const items = await Users.findOne(query);
+      storeQueryResults(req, items, 200);
+      next();
+    } catch(e) {
+      next(e);
+    }
   },
-  create(req, res){
-    Users
-      .create({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email
-      })
-      .then(result => res.status(201).json(result))
-      .catch(error => res.status(406).json(error));
+  create: async (req, res, next) => {
+    try {
+      const query = getParamsFromReq(req, [setFromRequestBody, setHashedPass]);
+      const items = await Users.create(query);
+      storeQueryResults(req, items, 201);
+      next();
+    } catch(e) {
+      next(e);
+    }
   },
-  update(req, res){
-    Users
-      .update({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email
-      },
-      {
-        where: {
-          id: req.params.id
-        }
-      })
-      .then(result => res.status(204).json(result))
-      .catch(error => res.status(401).json(error));
+  update: async (req, res, next) => {
+    try {
+      const query = getParamsFromReq(req, [setWhereId, setFromRequestBody]);
+      const items = await Users.update(query);
+      storeQueryResults(req, items, 204);
+      next();
+    } catch(e) {
+      next(e);
+    }
   },
-  delete(req, res){
-    Users
-      .destroy({
-          where: {
-            id: req.params.id
-          }
-        })
-      .then(() => res.status(204).end())
-      .catch(error => res.status(404).json(error));
-  },
+  delete: async (req, res, next) => {
+    try {
+      const query = getParamsFromReq(req,[setWhereId]);
+      const items = await Users.destroy(query);
+      storeQueryResults(req, items, 204);
+      next();
+    } catch(e) {
+      next(e);
+    }
+  }
 }
 
 module.exports = UserController;

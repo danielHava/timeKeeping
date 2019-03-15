@@ -1,36 +1,20 @@
 const Tasks = require('../db/models').Task;
+const getParamsFromReq = require('../utils/helpers').getParamsFromReq;
+const storeQueryResults = require('../utils/helpers').storeQueryResults;
 
-const addBody = (req) => ({...req.body });
+const setFromRequestBody = (req) => ({...req.body });
 const setStatusNew = () => ({ status: 'new' });
-const addTaskId = (req) => ({ where: { id: req.params.id } });
-const setCreatedBy = (req) => {
-  if(req.userRole === 'user'){
-    return { where: { createdBy: Number(req.userId) } };
-  }
-  return {};
-};
+const setWhereId = (req) => ({ where: { id: req.params.id } });
+const setCreatedBy = (req) => (req.userRole === 'user' ? {where: {createdBy: Number(req.userId)}} : {});
 
-function createResult(req, response, status = 200) {
-  req.result = {
-    response,
-    status 
-  }
-}
-
-function createParams(req, callbacks) {
-  return callbacks.reduce((qParams, callback) => ({
-    ...qParams,
-    ...callback(req)
-  }), {});
-}
 
 const TaskController = {
   list: async (req, res, next) => {
     try {
-      const query = createParams(req, [setCreatedBy]);
+      const query = getParamsFromReq(req, [setCreatedBy]);
       
       const items = await Tasks.findAll(query);
-      createResult(req, items, 201);
+      storeQueryResults(req, items, 200);
       next();
     } catch(e) {
       next(e);
@@ -38,9 +22,9 @@ const TaskController = {
   },
   find: async (req, res, next) => {
     try {
-      const query = createParams(req, [setCreatedBy, addTaskId]);
+      const query = getParamsFromReq(req, [setCreatedBy, setWhereId]);
       const items = await Tasks.findOne(query);
-      createResult(req, items, 201);
+      storeQueryResults(req, items, 201);
       next();
     } catch(e) {
       next(e);
@@ -48,9 +32,9 @@ const TaskController = {
   },
   create: async (req, res, next) => {
     try {
-      const query = createParams(req, [setCreatedBy, addBody, setStatusNew]);
+      const query = getParamsFromReq(req, [setCreatedBy, setFromRequestBody, setStatusNew]);
       const items = await Tasks.create(query);
-      createResult(req, items, 201);
+      storeQueryResults(req, items, 201);
       next();
     } catch(e) {
       next(e);
@@ -58,9 +42,9 @@ const TaskController = {
   },
   update: async (req, res, next) => {
     try {
-      const query = createParams(req, [setCreatedBy, addTaskId, addBody]);
+      const query = getParamsFromReq(req, [setCreatedBy, setWhereId, setFromRequestBody]);
       const items = await Tasks.update(query);
-      createResult(req, items, 201);
+      storeQueryResults(req, items, 201);
       next();
     } catch(e) {
       next(e);
@@ -68,9 +52,9 @@ const TaskController = {
   },
   delete: async (req, res, next) => {
     try {
-      const query = createParams(req, [addTaskId]);
+      const query = getParamsFromReq(req, [setWhereId]);
       const items = await Tasks.destroy(query);
-      createResult(req, items, 201);
+      storeQueryResults(req, items, 201);
       next();
     } catch(e) {
       next(e);
