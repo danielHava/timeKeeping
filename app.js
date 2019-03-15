@@ -2,9 +2,8 @@ require('dotenv').config();
 const express = require('express');
 // middleware
 const logger = require('morgan');
-const notFound = require('./middleware/errorHandler').notFound;
-const methodNotAllowed = require('./middleware/errorHandler').methodNotAllowed;
-const verifyToken = require('./middleware/verifyToken');
+const passport = require('passport');
+const genericErrorHandler = require('./middleware/errorHandler').genericErrorHandler;
 // routes
 const tasksRoute = require('./routes').tasksRoute;
 const usersRoute = require('./routes').usersRoute;
@@ -17,21 +16,21 @@ const options = {
   customeSiteTitle: 'TimeKeeping'
 };
  
-const app = express();
+require('./auth/auth');
 
+const app = express();
+// middleware
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
 
-// Auth Middleware
-// app.use(verifyToken);
-// Error Middleware
-// app.use(notFound);
-// app.use(methodNotAllowed);
-
+// routes
 app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
-app.use('/api/v1/tasks', verifyToken, tasksRoute);
-app.use('/api/v1/users', verifyToken, usersRoute);
+app.use('/api/v1/tasks', passport.authenticate('jwt', { session : false }), tasksRoute);
+app.use('/api/v1/users', passport.authenticate('jwt', { session : false }), usersRoute);
 app.use('/api/v1/auth', authRoute);
+
+app.use(genericErrorHandler);
 
 module.exports = app;

@@ -1,62 +1,103 @@
 const Users = require('../db/models').User;
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const getParamsFromReq = require('../utils/helpers').getParamsFromReq;
+const storeQueryResults = require('../utils/helpers').storeQueryResults;
+
+const setFromRequestBody = (req) => ({ ...req.body });
 
 const AuthController = {
-  register(req, res){
-    const hashedPassword = bcrypt.hashSync(req.body.password, 8);
-    Users
-      .create({
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          email: req.body.email,
-          password: hashedPassword,
-          role: req.body.role,
-      })
-      .then(result => {
-        const createdUser = result.dataValues;
-        const token = jwt.sign(
-          { id: createdUser.id, role: createdUser.role },
-          process.env.JWT_SECRET,
-          { expiresIn: process.env.JWT_EXPIRATION }
-        );
-        res.status(201).json({ auth: true, token: token })
-      })
-      .catch(error => {
-        res.status(403).json({ auth: false, message: 'Failed to authenticate token.', error: error })
-      });
+  register: async (req, res, next) => {
+    let result;
+    try {
+      const query = getParamsFromReq(req, [setFromRequestBody]);
+      const newUser = await Users.create(query);
+      if (newUser) {
+        result = {
+          message: 'User successfully registered.',
+          auth: false,
+          token: null,
+          data: newUser
+        };
+        storeQueryResults(req, result, 201);
+        next();
+      }
+    } catch (error) {
+      result = {
+        message: 'Error registering User.',
+        auth: false,
+        token: null,
+        data: error
+      };
+      next(error);
+    }
   },
-  details(req, res){
-    Users
-      .findOne({where: { id: req.userId }})
-      .then(result => {
-        if(!result){
-          res.status(404).json({ message: 'No user found.' });
-        }else{
-          res.status(200).json({ message: `User ${result.firstName} ${result.lastName}:${result.role} found.` });
-        }
-      })
-      .catch(error => res.status(500).json({ message: 'Error on server.', err: error }));
+  details: (req, res, next) => {
+    let result;
+    try {
+      const user = req.user;
+      if (!user) {
+        result = { message: 'No user found.', auth: false };
+        storeQueryResults(req, result, 404);
+        next();
+      } else {
+        result = {
+          message: `${user.role}: ${user.email} with id: ${user.id}, was found.`,
+          auth: true
+        };
+        storeQueryResults(req, result, 200);
+        next();
+      }
+    } catch (error) {
+      result = {
+        message: 'Error finding User.',
+        auth: false,
+        data: error
+      };
+      next(error);
+    }
   },
-  login(req, res){
-    Users
-      .findOne({where: { email: req.body.email }})
-      .then(result => {
-        if(!result){
-          res.status(404).json({ message: 'No user found.' });
-        }
-        const user = result.dataValues
-        const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
-        if (!passwordIsValid){
-          res.status(401).send({ auth: false, token: null, message: 'Invalid password.' });
-        }
-        const token = jwt.sign(
-          { id: user.id, role: user.role }, 
-          process.env.JWT_SECRET, 
-          { expiresIn: process.env.JWT_EXPIRATION });
-        res.status(200).json({ auth: true, token: token });
-      })
-      .catch(error => res.status(500).json({ message: 'Error on server.', err: error }));
+  login: async (email, password, done) => {
+    let result;
+    try {
+      const query = { email };
+      const user = await Users.findOne({ where: query });
+      if (!user) {
+        result = { message: 'No user found.', auth: false, token: null };
+        // storeQueryResults(req, result, 404);
+        return done(null, result);
+      }
+      const passwordIsValid = await user.isValidPassword(password);
+      if (!passwordIsValid) {
+        result = {
+          message: 'Invalid password.',
+          auth: false,
+          token: null
+        };
+        // storeQueryResults(req, result, 401);
+        return done(null, result);
+      }
+      const token = jwt.sign(
+        { id: user.get('id'), role: user.get('role'), email: user.get('email') },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRATION,
+          notBefore: process.env.JWT_EXPIRATION }
+      );
+      result = {
+        message: 'User logged in successfully',
+        auth: true,
+        token: token
+      };
+      // storeQueryResults(, result, 200);
+      return done(null, result);
+    } catch (error) {
+      result = {
+        message: 'Error logging in User.',                
+        auth: false,
+        token: null,
+        data: error
+      };
+      return done(error, result);
+    }
   }
 };
 

@@ -11,6 +11,6 @@ router.post('/', TaskController.create, apiResponse);
 
 router.put('/:id', TaskController.update, apiResponse);
 
-router.delete('/:id', TaskController.delete, apiResponse );
+router.delete('/:id', TaskController.delete, apiResponse);
 
 module.exports = router;
