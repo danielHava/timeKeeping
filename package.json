@@ -13,6 +13,8 @@
     "undo-seeders": "npx sequelize db:seed:undo:all"
   },
   "dependencies": {
+    "acl": "^0.4.11",
+    "acl-sequelize": "^0.2.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",

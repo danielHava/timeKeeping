@@ -2,6 +2,8 @@ const Users = require('../db/models').User;
 const jwt = require('jsonwebtoken');
 const getParamsFromReq = require('../utils/helpers').getParamsFromReq;
 const storeQueryResults = require('../utils/helpers').storeQueryResults;
+const ApiError = require('../utils/ApiError');
+const acl = require('../config/acl');
 
 const setFromRequestBody = (req) => ({ ...req.body });
 
@@ -18,85 +20,62 @@ const AuthController = {
           token: null,
           data: newUser
         };
-        storeQueryResults(req, result, 201);
-        next();
+        acl.addUserRoles(newUser.get('id'), newUser.get('role'), err => {
+          if (err) {
+            return next(error);
+          }
+          storeQueryResults(req, result, 201);
+          return next();
+        });
       }
     } catch (error) {
-      result = {
-        message: 'Error registering User.',
-        auth: false,
-        token: null,
-        data: error
-      };
-      next(error);
+      return next(error);
     }
   },
-  details: (req, res, next) => {
+  details: async (req, res, next) => {
     let result;
     try {
-      const user = req.user;
+      const user = await Users.findOne({ where: { id: req.user.id } });
       if (!user) {
         result = { message: 'No user found.', auth: false };
         storeQueryResults(req, result, 404);
-        next();
+         return next();
       } else {
         result = {
           message: `${user.role}: ${user.email} with id: ${user.id}, was found.`,
           auth: true
         };
         storeQueryResults(req, result, 200);
-        next();
+         return next();
       }
     } catch (error) {
-      result = {
-        message: 'Error finding User.',
-        auth: false,
-        data: error
-      };
-      next(error);
+      return next(error);
     }
   },
   login: async (email, password, done) => {
-    let result;
     try {
       const query = { email };
       const user = await Users.findOne({ where: query });
       if (!user) {
-        result = { message: 'No user found.', auth: false, token: null };
-        // storeQueryResults(req, result, 404);
-        return done(null, result);
+        return done(new ApiError({ message: 'No user was found.', status: 404, isPublic: true }));
       }
       const passwordIsValid = await user.isValidPassword(password);
       if (!passwordIsValid) {
-        result = {
-          message: 'Invalid password.',
-          auth: false,
-          token: null
-        };
-        // storeQueryResults(req, result, 401);
-        return done(null, result);
+        return done(new ApiError({ message: 'Invalid password.', status: 401, isPublic: true }));
       }
       const token = jwt.sign(
-        { id: user.get('id'), role: user.get('role'), email: user.get('email') },
+        { id: user.get('id') },
         process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRATION,
-          notBefore: process.env.JWT_EXPIRATION }
+        { expiresIn: process.env.JWT_EXPIRATION }
       );
-      result = {
-        message: 'User logged in successfully',
-        auth: true,
-        token: token
-      };
-      // storeQueryResults(, result, 200);
-      return done(null, result);
+      return done(null, user, { 
+        message: 'User logged in successfully', 
+        email: user.get('email'), 
+        token: token, 
+        expiresIn: process.env.JWT_EXPIRATION 
+      });
     } catch (error) {
-      result = {
-        message: 'Error logging in User.',                
-        auth: false,
-        token: null,
-        data: error
-      };
-      return done(error, result);
+      return done(error, false, { message: 'Error logging in User.' });
     }
   }
 };

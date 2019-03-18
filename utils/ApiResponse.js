@@ -3,7 +3,7 @@ const apiResponse = (req, res) => {
     const { status, response } = req.result;
     res.status(status).json(response)
   }else{
-    res.json(req.user);
+    res.json(req.authInfo);
   }
 }
 

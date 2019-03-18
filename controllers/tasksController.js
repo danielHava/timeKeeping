@@ -12,7 +12,6 @@ const TaskController = {
   list: async (req, res, next) => {
     try {
       const query = getParamsFromReq(req, [setCreatedBy]);
-      
       const items = await Tasks.findAll(query);
       storeQueryResults(req, items, 200);
       next();

@@ -32,6 +32,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     preferredHours: {
       type: DataTypes.STRING,
+    },
+    createdBy: {
+      type: DataTypes.INTEGER
     }
   }, {
     hooks: {
@@ -44,6 +47,12 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.isValidPassword = async function(password){
     return await bcrypt.compare(password, this.password);
+  }
+  
+  User.prototype.toJSON = function(){
+    var values = Object.assign({}, this.get());
+    delete values.password;
+    return values;
   }
 
   return User;
