@@ -17,7 +17,7 @@ const options = {
   customeSiteTitle: 'TimeKeeping'
 };
  
-require('./auth/auth');
+require('./config/passport');
 
 const app = express();
 
